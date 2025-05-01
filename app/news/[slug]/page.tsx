@@ -4,14 +4,22 @@ import Article from "@/app/_components/Article";
 import ButtonLink from "@/app/_components/ButtonLink";
 import styles from "./page.module.css";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  // Promise<...> に変える
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ dk?: string }>;
+};
 
-export default async function Page({ params }: Props) {
-  // ① params を await して解決
+export default async function Page({ params, searchParams }: Props) {
+  // ① params を await して slug を取り出す
   const { slug } = await params;
+  // ② searchParams を await して dk を取り出す
+  const { dk } = await searchParams;
 
-  // ② slug を使ってフェッチ
-  const data = await getNewsDetail(slug).catch(notFound);
+  // ③ 取得時に slug と dk を渡す
+  const data = await getNewsDetail(slug, {
+    draftKey: dk,
+  }).catch(notFound);
 
   return (
     <>
